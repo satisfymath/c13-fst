@@ -2,6 +2,7 @@ import uuid
 from datetime import UTC, datetime
 
 from pydantic import EmailStr
+from sqlalchemy import Index
 from sqlmodel import Field, Relationship, SQLModel
 
 
@@ -85,6 +86,8 @@ class ItemUpdate(SQLModel):
 
 # Database model, database table inferred from class name
 class Item(ItemBase, table=True):
+    __table_args__ = (Index("ix_item_owner_id_created_at", "owner_id", "created_at"),)
+
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
     created_at: datetime | None = Field(default_factory=get_datetime_utc)
     owner_id: uuid.UUID = Field(
